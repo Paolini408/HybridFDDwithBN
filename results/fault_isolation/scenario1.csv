@@ -1,0 +1,7 @@
+,Fault Air duct,Fault CC,Fault ECO,Fault MAT bias,Fault SAT bias,Normal
+Fault Air duct,0,0,0,0,0,0
+Fault CC,21,9918,7,0,634,2038
+Fault ECO,2,0,1600,3818,258,3320
+Fault MAT bias,0,0,0,0,0,0
+Fault SAT bias,9,9,0,163,5190,7237
+Normal,1,0,17,39,13,5165
