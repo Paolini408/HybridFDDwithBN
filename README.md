@@ -6,8 +6,10 @@
 3. [Descrizione del dataset](#descrizione-del-caso-studio)
 4. [Definizione dei modelli di baseline](#definizione-dei-modelli-di-baseline)
 5. [Definizione delle Bayesian Networks (struttura e probabilità)](#definizione-delle-bayesian-networks-struttura-e-probabilità)
-6. [Post-processing for fault Detection and Isolation](#post-processing-for-fault-detection-and-isolation)
-7. [Conclusioni](#conclusioni)
+6. [Post-processing per rilevazione e isolamento dei guasti](#post-processing-per-rilevazione-e-isolamento-dei-guasti)
+7. [Diagnosi dei guasti knowledge-driven](#diagnosi-dei-guasti-knowledge-driven)
+8. [Performance metrics](#performance-metrics)
+9. [Conclusioni](#conclusioni)
 
 ---
 
@@ -82,13 +84,13 @@ I nodi di evidenza, che rappresentano sintomi osservabili del sistema, sono stat
 
 ---
 
-## Post-processing for fault Detection and Isolation
+## Post-processing per rilevazione e isolamento dei guasti
 La rete bayesiana sviluppata analizza continuamente il comportamento del sistema, aggiornando le previsioni di guasto ogni 15 minuti. Tuttavia, per garantire maggiore affidabilità, i risultati non vengono valutati a ogni singolo intervallo, ma aggregati e analizzati su base giornaliera.
 In questa fase di post-processing, vengono applicate regole esperte per affinare i risultati, escludendo anomalie transitorie che potrebbero generare falsi allarmi. Queste regole tengono conto dei cambi di modalità operativa e delle interazioni gerarchiche tra guasti.
 
 ---
 
-## Daily knowledge-driven fault Diagnosis
+## Diagnosi dei guasti knowledge-driven
 L’ultimo step del processo è dedicato alla diagnosi, completando il processo di rilevazione e isolamento con l’identificazione della tipologia e gravità del malfunzionamento individuato.
 A differenza degli approcci supervisionati, che richiedono etichette di guasto predefinite, la metodologia adotta un approccio knowledge-driven, combinando regole esperte, semplici KPI e analisi statistiche. La diagnosi viene eseguita a fine giornata, una volta che i componenti guasti sono stati identificati.
 Un esempio di diagnosi grafica, soltanto per lo Scenario 3, è riportata in _figs/diagnosis_scenario3_.
