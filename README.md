@@ -5,7 +5,7 @@
 2. [Descrizione del caso studio](#descrizione-del-caso-studio)
 3. [Descrizione del dataset](#descrizione-del-caso-studio)
 4. [Definizione dei modelli di baseline](#definizione-dei-modelli-di-baseline)
-5. [Definizione delle Bayesian Networks (struttura e probabilità)](#definizione-delle-bayesian-networks-struttura-e-probabilità)
+5. [Definizione delle reti bayesiane (struttura e probabilità)](#definizione-delle-reti-bayesiane-struttura-e-probabilità)
 6. [Post-processing per rilevazione e isolamento dei guasti](#post-processing-per-rilevazione-e-isolamento-dei-guasti)
 7. [Diagnosi dei guasti knowledge-driven](#diagnosi-dei-guasti-knowledge-driven)
 8. [Performance metrics](#performance-metrics)
@@ -41,11 +41,11 @@ In particolare, sono stati rimossi dalle successive analisi specifici periodi te
 
 In questo lavoro sono stati adottati tre approcci differenti, ciascuno rappresentante un diverso livello di conoscenza sul funzionamento del sistema HVAC.
 I tre scenari considerati sono i seguenti:
-- Scenario 1: conoscenza limitata del sistema
-- Scenario 2: conoscenza completa del sistema e delle logiche di controllo
-- Scenario 3: conoscenza completa del sistema e delle logiche di controllo unita all'accesso della ground truth
+- **Scenario 1**: conoscenza limitata del sistema
+- **Scenario 2**: conoscenza completa del sistema e delle logiche di controllo
+- **Scenario 3**: conoscenza completa del sistema e delle logiche di controllo unita all'accesso della ground truth
 
-Dopo aver etichettato i dati normali presenti in tutti i file .csv disponibili, ciascun dataset è stato suddiviso assegnando la prima settimana di ogni mese dell’anno al set di test, mentre le settimane rimanenti sono state suddivise tra training e validation con un rapporto 80%-20% (_splitting_data.py_).
+Dopo aver etichettato i dati normali presenti in tutti i file .csv disponibili, ciascun dataset è stato suddiviso assegnando la prima settimana di ogni mese dell’anno al set di test, mentre le settimane rimanenti sono state suddivise tra training e validation con un rapporto 80%-20% (vedi _splitting_data.py_).
 
 Le etichette dei dati relativi ai guasti, anch’essi presenti nei file .csv, sono stati invece classificati e raggruppati in base al componente coinvolto.
 
@@ -57,18 +57,18 @@ In particolare, sono stati impiegati modelli RF di regressione per costruire un 
 Alcune variabili operative chiave sono state selezionate come variabili target in modelli separati, mentre un sottoinsieme delle restanti variabili relative al sistema è stato utilizzato come input.
 Le variabili esogene, come le condizioni climatiche, sono state impiegate esclusivamente come variabili di ingresso.
 
-I residui generati dai modelli RF addestrati sono stati utilizzati come **evidenze virtuali** nel successivo algoritmo basato su BN per la rilevazione e l’isolamento dei guasti.
+I residui generati dai modelli RF addestrati sono stati utilizzati come **virtual evidence** nel successivo algoritmo basato su BN per la rilevazione e l’isolamento dei guasti.
 Le evidenze virtuali rappresentano condizioni incerte e possono essere ottenute dai residui dei modelli di stima (baseline).
 Assumendo che i residui seguano una distribuzione gaussiana, le deviazioni tra i valori reali e quelli stimati possono essere trasformate in valori di probabilità di guasto compresi tra 0 (normal) e 1 (fault).
 Questi valori probabilistici sono stati poi utilizzati per aggiornare la probabilità di specifici nodi della rete bayesiana.
 
 ---
 
-## Definizione delle Bayesian Networks (struttura e probabilità)
+## Definizione delle reti bayesiane (struttura e probabilità)
 L’architettura della BN è stata definita a partire da un modello semantico basato su ontologia, utilizzando Brick.
 Questo schema semantico fornisce una descrizione dettagliata dei componenti HVAC e dei sensori associati a ciascun componente.
 La struttura iniziale della rete è stata successivamente affinata, integrando conoscenze di dominio.
-Tale processo ha permesso di eliminare variabili monitorate ridondanti e di aggiungere nodi supplementari, utili a rappresentare regole esperte o specifici KPI.
+Tale processo ha permesso di eliminare variabili monitorate ridondanti e di aggiungere nodi supplementari, utili a rappresentare regole esperte o specifici KPI (**hard evidence**).
 Inoltre, i sensori che misurano variabili controllate (come la temperatura dell’aria di mandata e quella dell’aria di mix) sono stati aggiunti.
 In seguito si riportano le due strutture delle BN, in base alla rispettiva modalità operativa:
 - **Cooling modes**
@@ -79,7 +79,7 @@ In seguito si riportano le due strutture delle BN, in base alla rispettiva modal
 ![BN structure for economizing mode](figs/SDAHU_economizing.png)
 
 Per ogni nodo di guasto componente (in arancione) è stata assegnata una probabilità a priori pari a **0.1** (guasto) e **0.9** (normale).
-Il nodo di guasto sistema HVAC (in verde) è stato definito secondo una regola deterministica di tipo **OR**: se almeno un componente è guasto, il sistema è considerato guasto (probabilità = 1); altrimenti, è considerato normale (probabilità = 0).
+Il nodo di guasto sistema HVAC (in verde) è stato definito secondo una regola deterministica di tipo OR: se almeno un componente è guasto, il sistema è considerato guasto (probabilità = 1); altrimenti, è considerato normale (probabilità = 0).
 I nodi di evidenza, che rappresentano sintomi osservabili del sistema, sono stati collegati ai nodi di guasto attraverso dipendenze probabilistiche. Le probabilità condizionate assegnate ai nodi di evidenza variano in base alla natura e alla gravità dei sintomi osservati (knowledge-based).
 
 ---
@@ -102,9 +102,9 @@ Le prestazioni dei modelli di baseline (_results/baseline_models_) sono state va
 - MAE (Mean Absolute Error)
 - MSE (Mean Squared Error)
 - RMSE (Root Mean Squared Error)
-- R2 (Coefficient of Determination)
+- R2 (coefficient of determination)
 
-La matrice di confusione è stata utilizzata per valutare le prestazioni della rilevazione dei guasti (_results/fault_detection_) e dell'isolamento dei guasti (_results/fault_isolation_).
+La Confusion Matrix è stata utilizzata per valutare le prestazioni della rilevazione dei guasti (_results/fault_detection_) e dell'isolamento dei guasti (_results/fault_isolation_).
 
 ---
 
